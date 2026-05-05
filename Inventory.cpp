@@ -1,149 +1,126 @@
 #include "Inventory.h"
+#include <iostream>
 using namespace std;
 
-Inventory::Inventory(int lowLimit) {
-    lowStockLimit = lowLimit;
+Inventory::Inventory(int cap) {
+    capacity = cap;
+    currentCount = 0;
+    products.resize(capacity, nullptr);
 }
 
 Inventory::~Inventory() {
-    stock.clear();
+    for (int i = 0; i < currentCount; i++) {
+        delete products[i];
+    }
 }
 
-// ================================
-// اضافة منتج
-// ================================
 void Inventory::addProduct(Product* product) {
-    if (product == nullptr) return;
-
-    int id = product->getProductID();
-
-    if (stock.find(id) != stock.end()) return;
-
-    stock[id] = product;
-}
-
-// ================================
-// حذف منتج
-// ================================
-void Inventory::removeProduct(int productID) {
-    if (stock.find(productID) == stock.end()) {
-        cout << ">> Product ID " << productID
-            << " not found!" << endl;
-        return;
-    }
-    stock.erase(productID);
-    cout << ">> [Inventory] Product removed." << endl;
-}
-
-// ================================
-// تعديل الكمية
-// ================================
-void Inventory::updateStock(int productID, int newQty) {
-    if (stock.find(productID) == stock.end()) {
-        cout << ">> Product ID " << productID
-            << " not found!" << endl;
-        return;
-    }
-
-    if (newQty < 0) {
-        cout << ">> Error: Quantity cannot be negative!" << endl;
-        return;
-    }
-
-    stock[productID]->setQuantity(newQty);
-
-    if (newQty < lowStockLimit) {
-        Notification notif(0,
-            "LOW STOCK WARNING: " +
-            stock[productID]->getProductName() +
-            " has only " + to_string(newQty) + " units left!");
-        notif.sendNotification();
+    if (currentCount < capacity) {
+        products[currentCount++] = product;
+    } else {
+        cout << ">> Inventory full!" << endl;
     }
 }
 
-// ================================
-// اعادة تخزين
-// ================================
-void Inventory::restockProduct(int productID, int addQty) {
-    if (stock.find(productID) == stock.end()) {
-        cout << ">> Product ID " << productID
-            << " not found!" << endl;
-        return;
+void Inventory::addProduct(string name, double price, string category, int quantity, int vendorID) {
+    if (currentCount < capacity) {
+        int newID = currentCount + 1;
+        Product* p = new Product(newID, name, price, quantity, category, vendorID);
+        products[currentCount++] = p;
+        cout << ">> Product added: " << name << " (ID: " << newID << ")" << endl;
+    } else {
+        cout << ">> Inventory is full! Cannot add product." << endl;
     }
-
-    if (addQty <= 0) {
-        cout << ">> Error: Add quantity must be positive!" << endl;
-        return;
-    }
-
-    int currentQty = stock[productID]->getQuantity();
-    int newQty = currentQty + addQty;
-    stock[productID]->setQuantity(newQty);
-
-    cout << ">> [Inventory] Restocked: "
-        << stock[productID]->getProductName()
-        << " | New Qty: " << newQty << endl;
 }
 
-// ================================
-// فحص المخزون القليل
-// ================================
-void Inventory::checkLowStock() const {
-    for (auto& pair : stock) {
-        if (pair.second->getQuantity() < lowStockLimit) {
-            Notification notif(0,
-                "LOW STOCK: " +
-                pair.second->getProductName() +
-                " | Qty: " +
-                to_string(pair.second->getQuantity()));
-            notif.sendNotification();
+Product* Inventory::getProduct(int productID) {
+    for (int i = 0; i < currentCount; i++) {
+        if (products[i]->getProductID() == productID) {
+            return products[i];
         }
     }
+    return nullptr;
 }
 
-// ================================
-// فحص توافر منتج
-// ================================
-bool Inventory::isProductAvailable(int productID,
-    int requiredQty) const {
-    if (stock.find(productID) == stock.end()) {
-        return false;
+vector<Product*> Inventory::getAllProducts() {
+    vector<Product*> result;
+    for (int i = 0; i < currentCount; i++) {
+        result.push_back(products[i]);
     }
-    return stock.at(productID)->getQuantity() >= requiredQty;
+    return result;
 }
 
-// ================================
-// عرض المخزون كامل
-// ================================
-void Inventory::displayInventory() const {
-    cout << "\n===== Inventory =====" << endl;
-
-    if (stock.empty()) {
-        cout << "  (No products in inventory)" << endl;
-    }
-    else {
-        for (auto& pair : stock) {
-            Product* p = pair.second;
-            cout << "  [" << p->getProductID() << "] "
-                << p->getProductName()
-                << " | Price: $" << p->getPrice()
-                << " | Qty: " << p->getQuantity();
-
-            if (p->getQuantity() < lowStockLimit)
-                cout << "  !! LOW STOCK";
-
-            cout << endl;
+vector<Product*> Inventory::getProductsByCategory(string category) {
+    vector<Product*> result;
+    for (int i = 0; i < currentCount; i++) {
+        if (products[i]->getCategory() == category) {
+            result.push_back(products[i]);
         }
     }
-    cout << "=====================" << endl;
+    return result;
 }
 
-// ================================
-// جيب منتج بالـ ID
-// ================================
-Product* Inventory::getProduct(int productID) const {
-    if (stock.find(productID) == stock.end()) {
-        return nullptr;
+vector<Product*> Inventory::getProductsByVendor(int vendorID) {
+    vector<Product*> result;
+    for (int i = 0; i < currentCount; i++) {
+        if (products[i]->getVendorID() == vendorID) {
+            result.push_back(products[i]);
+        }
     }
-    return stock.at(productID);
+    return result;
+}
+
+bool Inventory::isProductAvailable(int productID, int quantity) {
+    Product* p = getProduct(productID);
+    if (p && p->getQuantity() >= quantity) {
+        return true;
+    }
+    return false;
+}
+
+void Inventory::updateStock(int productID, int newQuantity) {
+    Product* p = getProduct(productID);
+    if (p) {
+        p->setQuantity(newQuantity);
+    }
+}
+
+void Inventory::updateProduct(int productID, double newPrice, int newStock) {
+    Product* p = getProduct(productID);
+    if (p) {
+        p->setPrice(newPrice);
+        p->setQuantity(newStock);
+        cout << ">> Product " << productID << " updated: Price = $" << newPrice << ", Stock = " << newStock << endl;
+    }
+}
+
+bool Inventory::removeProduct(int productID) {
+    for (int i = 0; i < currentCount; i++) {
+        if (products[i]->getProductID() == productID) {
+            delete products[i];
+            for (int j = i; j < currentCount - 1; j++) {
+                products[j] = products[j + 1];
+            }
+            products[currentCount - 1] = nullptr;
+            currentCount--;
+            cout << ">> Product " << productID << " removed from inventory" << endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Inventory::removeProductByVendor(int productID, int vendorID) {
+    for (int i = 0; i < currentCount; i++) {
+        if (products[i]->getProductID() == productID && products[i]->getVendorID() == vendorID) {
+            delete products[i];
+            for (int j = i; j < currentCount - 1; j++) {
+                products[j] = products[j + 1];
+            }
+            products[currentCount - 1] = nullptr;
+            currentCount--;
+            return true;
+        }
+    }
+    return false;
 }
