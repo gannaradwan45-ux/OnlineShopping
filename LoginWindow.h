@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QStackedWidget>
 #include <QCheckBox>
+#include <QComboBox>
 #include "User.h"
 #include "Inventory.h"
 #include "ShoppingCart.h"
@@ -42,6 +43,7 @@ private:
     QPushButton* registerBtn;
     QLabel* registerErrorLabel;
     QLabel* passwordStrengthLabel;
+    QComboBox* roleCombo;
 
     QStackedWidget* stackedWidget;
     Inventory* inventory;
