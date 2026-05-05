@@ -1,19 +1,26 @@
 #include "product.h"
-#include <iostream>
-using namespace std;
 
-Product::Product(int id, string name, double p,
-    string cat, int qty) {
+// Default constructor
+Product::Product() {
+    productID = 0;
+    productName = "";
+    price = 0.0;
+    quantity = 0;
+    category = "";
+    vendorID = 0;
+}
+
+// Parameterized constructor
+Product::Product(int id, string name, double p, int qty, string cat, int vendor) {
     productID = id;
     productName = name;
     price = p;
-    category = cat;
     quantity = qty;
+    category = cat;
+    vendorID = vendor;
 }
 
-// ================================
 // Getters
-// ================================
 int Product::getProductID() const {
     return productID;
 }
@@ -26,74 +33,49 @@ double Product::getPrice() const {
     return price;
 }
 
-string Product::getCategory() const {
-    return category;
-}
-
 int Product::getQuantity() const {
     return quantity;
 }
 
-// ================================
+string Product::getCategory() const {
+    return category;
+}
+
+int Product::getVendorID() const {
+    return vendorID;
+}
+
 // Setters
-// ================================
-void Product::setQuantity(int qty) {
-    if (qty >= 0)
-        quantity = qty;
-    else
-        cout << ">> Error: Quantity cannot be negative!" << endl;
+void Product::setProductName(string name) {
+    productName = name;
 }
 
 void Product::setPrice(double p) {
-    if (p >= 0)
-        price = p;
-    else
-        cout << ">> Error: Price cannot be negative!" << endl;
+    price = p;
 }
 
-// ================================
-// Calculate Final Price
-// ================================
-double Product::calculateFinalPrice() const {
-    return price * quantity;
+void Product::setQuantity(int qty) {
+    quantity = qty;
 }
 
-// ================================
-// Update Stock
-// ================================
-void Product::updateStock(int newQty) {
-    if (newQty >= 0) {
-        quantity = newQty;
-        cout << ">> [Product] Stock updated: "
-            << productName
-            << " | New Qty: " << quantity << endl;
-    }
-    else {
-        cout << ">> Error: Invalid quantity!" << endl;
-    }
+void Product::setCategory(string cat) {
+    category = cat;
 }
 
-// ================================
-// Display Product
-// ================================
-void Product::displayProduct() const {
-    cout << "-----------------------" << endl;
-    cout << "ID       : " << productID << endl;
-    cout << "Name     : " << productName << endl;
-    cout << "Price    : $" << price << endl;
-    cout << "Category : " << category << endl;
-    cout << "Quantity : " << quantity << endl;
-    cout << "-----------------------" << endl;
+void Product::setVendorID(int vendor) {
+    vendorID = vendor;
 }
 
-// ================================
-// Display Info (short version)
-// ================================
-void Product::displayInfo() const {
-    cout << "  [" << productID << "] "
-        << productName
-        << " | Price: $" << price
-        << " | Stock: " << quantity
-        << " | Category: " << category
-        << endl;
+// Methods
+void Product::display() const {
+    cout << "Product ID: " << productID << endl;
+    cout << "Name: " << productName << endl;
+    cout << "Price: $" << price << endl;
+    cout << "Stock: " << quantity << endl;
+    cout << "Category: " << category << endl;
+    cout << "Vendor ID: " << vendorID << endl;
+}
+
+bool Product::isAvailable() const {
+    return quantity > 0;
 }
