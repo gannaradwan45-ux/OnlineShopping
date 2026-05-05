@@ -1,18 +1,16 @@
-#ifndef AUTHMANAGER_H
-#define AUTHMANAGER_H
-
+#pragma once
 #include <vector>
 #include "User.h"
+using namespace std;
 
 class AuthManager {
 private:
     static vector<User*> users;
     static User* currentUser;
     static int nextID;
-    
     static void loadUsers();
     static void saveUsers();
-    
+
 public:
     static bool registerUser(string username, string email, string password);
     static bool loginUser(string usernameOrEmail, string password);
@@ -24,5 +22,3 @@ public:
     static bool getRememberMe();
     static void clearUsers();
 };
-
-#endif
