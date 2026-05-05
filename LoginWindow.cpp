@@ -11,21 +11,28 @@
 
 LoginWindow::LoginWindow(QWidget* parent) : QMainWindow(parent) {
     setWindowTitle("🔐 Online Shop - Login");
-    setFixedSize(480, 650);
+    setFixedSize(480, 700);
     setStyleSheet("QMainWindow { background-color: #1a1a2e; }");
 
-    // Initialize inventory and cart
-    inventory = new Inventory(10);
-    inventory->addProduct(ProductFactory::createProduct("Electronics", 1, "iPhone 15", 999.99, 10));
-    inventory->addProduct(ProductFactory::createProduct("Electronics", 2, "Samsung TV", 599.99, 5));
-    inventory->addProduct(ProductFactory::createProduct("Electronics", 3, "Laptop Dell", 1200.00, 8));
-    inventory->addProduct(ProductFactory::createProduct("Grocery", 4, "Rice 5kg", 15.00, 50));
-    inventory->addProduct(ProductFactory::createProduct("Grocery", 5, "Milk 1L", 5.00, 30));
-    inventory->addProduct(ProductFactory::createProduct("Grocery", 6, "Bread", 3.00, 20));
-    inventory->addProduct(ProductFactory::createProduct("Books", 7, "C++ Programming", 45.00, 15));
-    inventory->addProduct(ProductFactory::createProduct("Books", 8, "Data Structures", 55.00, 12));
-    inventory->addProduct(ProductFactory::createProduct("Appliances", 9, "Washing Machine", 450.00, 4));
-    inventory->addProduct(ProductFactory::createProduct("Appliances", 10, "Refrigerator", 700.00, 3));
+    // ---- Initialize inventory with large capacity ----
+    inventory = new Inventory(1000);  // capacity كبيرة تكفي
+
+    // حاول تحمّل المنتجات من الـ file الأول
+    inventory->loadFromFile();
+
+    // لو الـ file فاضي (أول مرة تشغيل) أضف المنتجات الافتراضية
+    if (inventory->getCurrentCount() == 0) {
+        inventory->addProduct(ProductFactory::createProduct("Electronics", 1, "iPhone 15",       999.99, 10));
+        inventory->addProduct(ProductFactory::createProduct("Electronics", 2, "Samsung TV",       599.99,  5));
+        inventory->addProduct(ProductFactory::createProduct("Electronics", 3, "Laptop Dell",     1200.00,  8));
+        inventory->addProduct(ProductFactory::createProduct("Grocery",     4, "Rice 5kg",          15.00, 50));
+        inventory->addProduct(ProductFactory::createProduct("Grocery",     5, "Milk 1L",            5.00, 30));
+        inventory->addProduct(ProductFactory::createProduct("Grocery",     6, "Bread",              3.00, 20));
+        inventory->addProduct(ProductFactory::createProduct("Books",       7, "C++ Programming",   45.00, 15));
+        inventory->addProduct(ProductFactory::createProduct("Books",       8, "Data Structures",   55.00, 12));
+        inventory->addProduct(ProductFactory::createProduct("Appliances",  9, "Washing Machine",  450.00,  4));
+        inventory->addProduct(ProductFactory::createProduct("Appliances", 10, "Refrigerator",     700.00,  3));
+    }
 
     cart = new ShoppingCart(1, 0);
 
@@ -151,11 +158,10 @@ void LoginWindow::setupLoginWidget() {
         "}"
         );
     connect(showPassBtn, &QPushButton::clicked, [this]() {
-        if (loginPasswordEdit->echoMode() == QLineEdit::Password) {
+        if (loginPasswordEdit->echoMode() == QLineEdit::Password)
             loginPasswordEdit->setEchoMode(QLineEdit::Normal);
-        } else {
+        else
             loginPasswordEdit->setEchoMode(QLineEdit::Password);
-        }
     });
     passLayout->addWidget(showPassBtn);
     layout->addLayout(passLayout);
@@ -175,9 +181,7 @@ void LoginWindow::setupLoginWidget() {
         "  border: none;"
         "  text-align: left;"
         "}"
-        "QPushButton:hover {"
-        "  color: #c73652;"
-        "}"
+        "QPushButton:hover { color: #c73652; }"
         );
     connect(forgotBtn, &QPushButton::clicked, this, &LoginWindow::onForgotPassword);
     layout->addWidget(forgotBtn);
@@ -201,9 +205,7 @@ void LoginWindow::setupLoginWidget() {
         "  font-size: 16px;"
         "  font-weight: bold;"
         "}"
-        "QPushButton:hover {"
-        "  background-color: #c73652;"
-        "}"
+        "QPushButton:hover { background-color: #c73652; }"
         );
     connect(loginBtn, &QPushButton::clicked, this, &LoginWindow::onLoginClicked);
     layout->addWidget(loginBtn);
@@ -228,16 +230,11 @@ void LoginWindow::setupRegisterWidget() {
     regUsernameEdit->setPlaceholderText("Choose a username");
     regUsernameEdit->setStyleSheet(
         "QLineEdit {"
-        "  background-color: #16213e;"
-        "  color: white;"
-        "  border: 2px solid #0f3460;"
-        "  border-radius: 10px;"
-        "  padding: 12px;"
-        "  font-size: 14px;"
+        "  background-color: #16213e; color: white;"
+        "  border: 2px solid #0f3460; border-radius: 10px;"
+        "  padding: 12px; font-size: 14px;"
         "}"
-        "QLineEdit:focus {"
-        "  border: 2px solid #e94560;"
-        "}"
+        "QLineEdit:focus { border: 2px solid #e94560; }"
         );
     regUsernameEdit->setFixedHeight(45);
     layout->addWidget(regUsernameEdit);
@@ -251,16 +248,11 @@ void LoginWindow::setupRegisterWidget() {
     regEmailEdit->setPlaceholderText("your@email.com");
     regEmailEdit->setStyleSheet(
         "QLineEdit {"
-        "  background-color: #16213e;"
-        "  color: white;"
-        "  border: 2px solid #0f3460;"
-        "  border-radius: 10px;"
-        "  padding: 12px;"
-        "  font-size: 14px;"
+        "  background-color: #16213e; color: white;"
+        "  border: 2px solid #0f3460; border-radius: 10px;"
+        "  padding: 12px; font-size: 14px;"
         "}"
-        "QLineEdit:focus {"
-        "  border: 2px solid #e94560;"
-        "}"
+        "QLineEdit:focus { border: 2px solid #e94560; }"
         );
     regEmailEdit->setFixedHeight(45);
     layout->addWidget(regEmailEdit);
@@ -275,22 +267,16 @@ void LoginWindow::setupRegisterWidget() {
     regPasswordEdit->setEchoMode(QLineEdit::Password);
     regPasswordEdit->setStyleSheet(
         "QLineEdit {"
-        "  background-color: #16213e;"
-        "  color: white;"
-        "  border: 2px solid #0f3460;"
-        "  border-radius: 10px;"
-        "  padding: 12px;"
-        "  font-size: 14px;"
+        "  background-color: #16213e; color: white;"
+        "  border: 2px solid #0f3460; border-radius: 10px;"
+        "  padding: 12px; font-size: 14px;"
         "}"
-        "QLineEdit:focus {"
-        "  border: 2px solid #e94560;"
-        "}"
+        "QLineEdit:focus { border: 2px solid #e94560; }"
         );
     regPasswordEdit->setFixedHeight(45);
     connect(regPasswordEdit, &QLineEdit::textChanged, this, &LoginWindow::checkPasswordStrength);
     layout->addWidget(regPasswordEdit);
 
-    // Password strength
     passwordStrengthLabel = new QLabel();
     passwordStrengthLabel->setStyleSheet("font-size: 11px; margin-top: -5px;");
     layout->addWidget(passwordStrengthLabel);
@@ -305,19 +291,37 @@ void LoginWindow::setupRegisterWidget() {
     regConfirmEdit->setEchoMode(QLineEdit::Password);
     regConfirmEdit->setStyleSheet(
         "QLineEdit {"
-        "  background-color: #16213e;"
-        "  color: white;"
-        "  border: 2px solid #0f3460;"
-        "  border-radius: 10px;"
-        "  padding: 12px;"
-        "  font-size: 14px;"
+        "  background-color: #16213e; color: white;"
+        "  border: 2px solid #0f3460; border-radius: 10px;"
+        "  padding: 12px; font-size: 14px;"
         "}"
-        "QLineEdit:focus {"
-        "  border: 2px solid #e94560;"
-        "}"
+        "QLineEdit:focus { border: 2px solid #e94560; }"
         );
     regConfirmEdit->setFixedHeight(45);
     layout->addWidget(regConfirmEdit);
+
+    // Role
+    QLabel* roleLabel = new QLabel("Account Type");
+    roleLabel->setStyleSheet("color: #ffffff; font-size: 13px; font-weight: bold;");
+    layout->addWidget(roleLabel);
+
+    roleCombo = new QComboBox();
+    roleCombo->addItem("Customer");
+    roleCombo->addItem("Vendor");
+    roleCombo->setStyleSheet(
+        "QComboBox {"
+        "  background-color: #16213e; color: white;"
+        "  border: 2px solid #0f3460; border-radius: 10px;"
+        "  padding: 8px 12px; font-size: 13px;"
+        "}"
+        "QComboBox::drop-down { border: none; }"
+        "QComboBox QAbstractItemView {"
+        "  background-color: #16213e; color: white;"
+        "  selection-background-color: #e94560;"
+        "}"
+        );
+    roleCombo->setFixedHeight(40);
+    layout->addWidget(roleCombo);
 
     // Error Label
     registerErrorLabel = new QLabel();
@@ -332,32 +336,21 @@ void LoginWindow::setupRegisterWidget() {
     registerBtn->setFixedHeight(50);
     registerBtn->setStyleSheet(
         "QPushButton {"
-        "  background-color: #e94560;"
-        "  color: white;"
-        "  border-radius: 10px;"
-        "  font-size: 16px;"
-        "  font-weight: bold;"
+        "  background-color: #e94560; color: white;"
+        "  border-radius: 10px; font-size: 16px; font-weight: bold;"
         "}"
-        "QPushButton:hover {"
-        "  background-color: #c73652;"
-        "}"
+        "QPushButton:hover { background-color: #c73652; }"
         );
     connect(registerBtn, &QPushButton::clicked, this, &LoginWindow::onRegisterClicked);
     layout->addWidget(registerBtn);
 
-    // Back to login
     QPushButton* backBtn = new QPushButton("← Back to Sign In");
     backBtn->setStyleSheet(
         "QPushButton {"
-        "  background-color: transparent;"
-        "  color: #e94560;"
-        "  font-size: 13px;"
-        "  border: none;"
-        "  margin-top: 10px;"
+        "  background-color: transparent; color: #e94560;"
+        "  font-size: 13px; border: none; margin-top: 10px;"
         "}"
-        "QPushButton:hover {"
-        "  color: #c73652;"
-        "}"
+        "QPushButton:hover { color: #c73652; }"
         );
     connect(backBtn, &QPushButton::clicked, this, &LoginWindow::switchToLogin);
     layout->addWidget(backBtn);
@@ -392,9 +385,12 @@ void LoginWindow::onLoginClicked() {
 
     if (AuthManager::loginUser(usernameOrEmail.toStdString(), password.toStdString())) {
         AuthManager::saveRememberMe(rememberMeCheck->isChecked());
-        string username = AuthManager::getCurrentUser()->getUsername();
+        User* currentUser = AuthManager::getCurrentUser();
 
-        StoreWindow* store = new StoreWindow(inventory, cart, QString::fromStdString(username), this);
+        // ---- reload المنتجات قبل ما تفتح الـ StoreWindow ----
+        inventory->loadFromFile();
+
+        StoreWindow* store = new StoreWindow(inventory, cart, currentUser, this);
         store->show();
         this->hide();
     } else {
@@ -405,9 +401,9 @@ void LoginWindow::onLoginClicked() {
 
 void LoginWindow::onRegisterClicked() {
     QString username = regUsernameEdit->text().trimmed();
-    QString email = regEmailEdit->text().trimmed();
+    QString email    = regEmailEdit->text().trimmed();
     QString password = regPasswordEdit->text();
-    QString confirm = regConfirmEdit->text();
+    QString confirm  = regConfirmEdit->text();
 
     if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
         registerErrorLabel->setText("❌ Please fill in all fields");
@@ -433,7 +429,9 @@ void LoginWindow::onRegisterClicked() {
         return;
     }
 
-    if (AuthManager::registerUser(username.toStdString(), email.toStdString(), password.toStdString())) {
+    string role = roleCombo->currentText().toStdString();
+
+    if (AuthManager::registerUser(username.toStdString(), email.toStdString(), password.toStdString(), role)) {
         QMessageBox::information(this, "Success", "✅ Account created successfully!\n\nPlease sign in.");
         switchToLogin();
         loginUsernameEdit->setText(email);
@@ -446,7 +444,6 @@ void LoginWindow::onRegisterClicked() {
 void LoginWindow::onForgotPassword() {
     QString email = QInputDialog::getText(this, "Reset Password",
                                           "Enter your email address:", QLineEdit::Normal, "", nullptr);
-
     if (!email.isEmpty()) {
         if (AuthManager::userExists(email.toStdString())) {
             QMessageBox::information(this, "Reset Password",
@@ -465,11 +462,10 @@ bool LoginWindow::validateEmail(QString email) {
 void LoginWindow::checkPasswordStrength(QString password) {
     QString strength = getPasswordStrength(password);
     QString color;
-
-    if (strength == "Weak") color = "#ff6b6b";
+    if      (strength == "Weak")   color = "#ff6b6b";
     else if (strength == "Medium") color = "#ffd93d";
     else if (strength == "Strong") color = "#6bcb77";
-    else color = "#a8a8b3";
+    else                           color = "#a8a8b3";
 
     passwordStrengthLabel->setText("🔐 " + strength);
     passwordStrengthLabel->setStyleSheet(QString("color: %1; font-size: 11px;").arg(color));
@@ -477,21 +473,20 @@ void LoginWindow::checkPasswordStrength(QString password) {
 
 QString LoginWindow::getPasswordStrength(QString password) {
     int strength = 0;
-
-    if (password.length() >= 6) strength++;
+    if (password.length() >= 6)  strength++;
     if (password.length() >= 10) strength++;
 
     bool hasUpper = false, hasLower = false, hasDigit = false, hasSpecial = false;
     for (QChar c : password) {
-        if (c.isUpper()) hasUpper = true;
-        else if (c.isLower()) hasLower = true;
-        else if (c.isDigit()) hasDigit = true;
+        if      (c.isUpper())          hasUpper   = true;
+        else if (c.isLower())          hasLower   = true;
+        else if (c.isDigit())          hasDigit   = true;
         else if (!c.isLetterOrNumber()) hasSpecial = true;
     }
 
     if (hasUpper && hasLower) strength++;
-    if (hasDigit) strength++;
-    if (hasSpecial) strength++;
+    if (hasDigit)             strength++;
+    if (hasSpecial)           strength++;
 
     if (strength >= 4) return "Strong";
     if (strength >= 2) return "Medium";
