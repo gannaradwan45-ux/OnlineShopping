@@ -9,17 +9,13 @@ Product* ProductFactory::createProduct(
     int qty)
 {
     if (type == "Electronics" || type == "electronics")
-        return new Product(id, name, price, "Electronics", qty);
-
+        return new Product(id, name, price, qty, "Electronics");
     else if (type == "Grocery" || type == "grocery")
-        return new Product(id, name, price, "Grocery", qty);
-
+        return new Product(id, name, price, qty, "Grocery");
     else if (type == "Books" || type == "books")
-        return new Product(id, name, price, "Books", qty);
-
+        return new Product(id, name, price, qty, "Books");
     else if (type == "Appliances" || type == "appliances")
-        return new Product(id, name, price, "Appliances", qty);
-
+        return new Product(id, name, price, qty, "Appliances");
     else
-        return new Product(id, name, price, "General", qty);
+        return new Product(id, name, price, qty, "General");
 }
