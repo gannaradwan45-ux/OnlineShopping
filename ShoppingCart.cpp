@@ -46,31 +46,28 @@ void ShoppingCart::recalculateTotal() {
         totalAmount += items[i].getSubtotal();
 }
 
-void ShoppingCart::addItem(int productID, string productName, double price, int quantity) {
+void ShoppingCart::addItem(int productID, string productName,
+                           double price, int quantity) {
     for (int i = 0; i < (int)items.size(); i++) {
         if (items[i].getProductID() == productID) {
             items[i].setQuantity(items[i].getQuantity() + quantity);
             recalculateTotal();
-            cout << "  >> Quantity updated for: " << productName << endl;
             return;
         }
     }
     CartItem newItem(productID, productName, price, quantity);
     items.push_back(newItem);
     recalculateTotal();
-    cout << "  >> Added to cart: " << productName << endl;
 }
 
 void ShoppingCart::removeItem(int productID) {
     for (int i = 0; i < (int)items.size(); i++) {
         if (items[i].getProductID() == productID) {
-            cout << "  >> Removed: " << items[i].getProductName() << endl;
             items.erase(items.begin() + i);
             recalculateTotal();
             return;
         }
     }
-    cout << "  >> Product not found." << endl;
 }
 
 void ShoppingCart::updateQuantity(int productID, int newQty) {
@@ -79,7 +76,6 @@ void ShoppingCart::updateQuantity(int productID, int newQty) {
         if (items[i].getProductID() == productID) {
             items[i].setQuantity(newQty);
             recalculateTotal();
-            cout << "  >> Quantity updated." << endl;
             return;
         }
     }
@@ -87,9 +83,8 @@ void ShoppingCart::updateQuantity(int productID, int newQty) {
 
 int ShoppingCart::getQuantity(int productID) const {
     for (int i = 0; i < (int)items.size(); i++) {
-        if (items[i].getProductID() == productID) {
+        if (items[i].getProductID() == productID)
             return items[i].getQuantity();
-        }
     }
     return 0;
 }
@@ -107,17 +102,16 @@ void ShoppingCart::display() const {
     if (items.empty()) cout << "  Cart is empty." << endl;
     else {
         for (int i = 0; i < (int)items.size(); i++) items[i].display(true);
-        cout << "  --------------------------" << endl;
         cout << "  TOTAL: $" << totalAmount << endl;
     }
     cout << "========================================" << endl;
 }
+
 void ShoppingCart::display(string header) const {
     cout << "\n===== " << header << " =====" << endl;
     if (items.empty()) cout << "  Cart is empty." << endl;
     else {
         for (int i = 0; i < (int)items.size(); i++) items[i].display(true);
-        cout << "  --------------------------" << endl;
         cout << "  TOTAL: $" << totalAmount << endl;
     }
     cout << "========================================" << endl;
@@ -142,7 +136,6 @@ Order::~Order() {}
 int Order::getOrderID() const { return orderID; }
 string Order::getStatus() const { return status; }
 double Order::getTotalPrice() const { return totalPrice; }
-
 void Order::setStatus(string s) { status = s; }
 
 void Order::cancelOrder() {
@@ -191,6 +184,7 @@ void OrderHistory::displayAll() const {
     else for (int i = 0; i < (int)orders.size(); i++) orders[i].display();
     cout << "=====================================================" << endl;
 }
+
 void OrderHistory::displayAll(string filterStatus) const {
     cout << "\n===== Orders [" << filterStatus << "] =====" << endl;
     bool found = false;
