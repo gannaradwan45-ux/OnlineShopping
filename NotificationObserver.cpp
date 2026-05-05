@@ -112,3 +112,4 @@ void NotificationManager::displayObservers() const {
 NotificationManager::~NotificationManager() {
     observers.clear();
 }
+
