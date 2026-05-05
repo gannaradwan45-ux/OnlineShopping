@@ -10,9 +10,9 @@ private:
     static int nextID;
     static void loadUsers();
     static void saveUsers();
-
 public:
     static bool registerUser(string username, string email, string password);
+    static bool registerUser(string username, string email, string password, string role);
     static bool loginUser(string usernameOrEmail, string password);
     static User* getCurrentUser();
     static void logout();
