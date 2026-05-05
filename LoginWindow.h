@@ -1,6 +1,3 @@
-#ifndef LOGINWINDOW_H
-#define LOGINWINDOW_H
-
 #pragma once
 #include <QMainWindow>
 #include <QLineEdit>
@@ -27,9 +24,9 @@ private slots:
     void switchToRegister();
     void switchToLogin();
     void onForgotPassword();
+    void checkPasswordStrength(QString password);
 
 private:
-    // Login widgets
     QWidget* loginWidget;
     QLineEdit* loginUsernameEdit;
     QLineEdit* loginPasswordEdit;
@@ -37,7 +34,6 @@ private:
     QCheckBox* rememberMeCheck;
     QLabel* loginErrorLabel;
 
-    // Register widgets
     QWidget* registerWidget;
     QLineEdit* regUsernameEdit;
     QLineEdit* regEmailEdit;
@@ -48,7 +44,6 @@ private:
     QLabel* passwordStrengthLabel;
 
     QStackedWidget* stackedWidget;
-
     Inventory* inventory;
     ShoppingCart* cart;
 
@@ -56,7 +51,4 @@ private:
     void setupRegisterWidget();
     bool validateEmail(QString email);
     QString getPasswordStrength(QString password);
-    void checkPasswordStrength(QString password);
 };
-
-#endif
