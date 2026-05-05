@@ -11,12 +11,12 @@ void FileManager::saveUser(User* user) {
         return;
     }
     file << user->getUserID() << ","
-        << user->getUsername() << ","
-        << user->getRole() << ","
-        << user->getEmail() << endl;
+         << user->getUsername() << ","
+         << user->getRole() << ","
+         << user->getEmail() << endl;
     file.close();
     cout << ">> [FileManager] User saved: "
-        << user->getUsername() << endl;
+         << user->getUsername() << endl;
 }
 
 void FileManager::loadUsers() {
@@ -44,12 +44,12 @@ void FileManager::saveProduct(Product* product) {
         return;
     }
     file << product->getProductID() << ","
-        << product->getProductName() << ","
-        << product->getPrice() << ","
-        << product->getQuantity() << endl;
+         << product->getProductName() << ","
+         << product->getPrice() << ","
+         << product->getQuantity() << endl;
     file.close();
     cout << ">> [FileManager] Product saved: "
-        << product->getProductName() << endl;
+         << product->getProductName() << endl;
 }
 
 void FileManager::loadProducts() {
@@ -77,11 +77,11 @@ void FileManager::saveOrder(const Order& order) {
         return;
     }
     file << order.getOrderID() << ","
-        << order.getStatus() << ","
-        << order.getTotalPrice() << endl;
+         << order.getStatus() << ","
+         << order.getTotalPrice() << endl;
     file.close();
     cout << ">> [FileManager] Order saved: #"
-        << order.getOrderID() << endl;
+         << order.getOrderID() << endl;
 }
 
 void FileManager::loadOrders() {
@@ -114,10 +114,10 @@ void FileManager::saveCart(const ShoppingCart& cart) {
     vector<CartItem> items = cart.getItems();
     for (int i = 0; i < (int)items.size(); i++) {
         file << items[i].getProductID() << ","
-            << items[i].getProductName() << ","
-            << items[i].getPrice() << ","
-            << items[i].getQuantity() << ","
-            << items[i].getSubtotal() << endl;
+             << items[i].getProductName() << ","
+             << items[i].getPrice() << ","
+             << items[i].getQuantity() << ","
+             << items[i].getSubtotal() << endl;
     }
     file << "Total: " << cart.getTotalAmount() << endl;
     file << "---" << endl;
@@ -150,12 +150,12 @@ void FileManager::savePayment(const Payment& payment) {
         return;
     }
     file << payment.getPaymentID() << ","
-        << payment.getPaymentMethod() << ","
-        << payment.getAmount() << ","
-        << payment.getStatus() << endl;
+         << payment.getPaymentMethod() << ","
+         << payment.getAmount() << ","
+         << payment.getStatus() << endl;
     file.close();
     cout << ">> [FileManager] Payment saved: #"
-        << payment.getPaymentID() << endl;
+         << payment.getPaymentID() << endl;
 }
 
 void FileManager::loadPayments() {
