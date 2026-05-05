@@ -1,5 +1,5 @@
 #include "Discount.h"
-#include <stdexcept> 
+#include <stdexcept>
 
 Discount::Discount(int Code, double Percent) {
     if (Percent < 0 || Percent > 100)
