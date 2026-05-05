@@ -1,3 +1,4 @@
+
 #include "AuthManager.h"
 #include <fstream>
 #include <sstream>
@@ -9,28 +10,27 @@ User* AuthManager::currentUser = nullptr;
 int AuthManager::nextID = 1;
 static string filename = "users_data.txt";
 
+// Admin credentials
+static const string ADMIN_EMAIL = "admin@system.com";
+static const string ADMIN_PASSWORD = "admin123";
+
 void AuthManager::loadUsers() {
     for (User* u : users) {
         delete u;
     }
     users.clear();
-
     ifstream file(filename);
     if (!file.is_open()) return;
-
     string line;
     while (getline(file, line)) {
         stringstream ss(line);
         string idStr, username, password, email, role;
-
         getline(ss, idStr, ',');
         getline(ss, username, ',');
         getline(ss, password, ',');
         getline(ss, email, ',');
         getline(ss, role, ',');
-
         int id = stoi(idStr);
-
         if (role == "Admin") {
             users.push_back(new Admin(id, username, password, email));
         } else if (role == "Vendor") {
@@ -38,7 +38,6 @@ void AuthManager::loadUsers() {
         } else {
             users.push_back(new Customer(id, username, password, email));
         }
-
         if (id >= nextID) nextID = id + 1;
     }
     file.close();
@@ -58,6 +57,23 @@ void AuthManager::saveUsers() {
 
 bool AuthManager::registerUser(string username, string email, string password) {
     loadUsers();
+    for (User* user : users) {
+        if (user->getUsername() == username || user->getEmail() == email) {
+            return false;
+        }
+    }
+    Customer* newUser = new Customer(nextID++, username, password, email);
+    users.push_back(newUser);
+    saveUsers();
+    return true;
+}
+
+bool AuthManager::registerUser(string username, string email, string password, string role) {
+    loadUsers();
+
+    if (role == "Admin") {
+        return false;
+    }
 
     for (User* user : users) {
         if (user->getUsername() == username || user->getEmail() == email) {
@@ -65,15 +81,27 @@ bool AuthManager::registerUser(string username, string email, string password) {
         }
     }
 
-    Customer* newUser = new Customer(nextID++, username, password, email);
+    User* newUser = nullptr;
+    if (role == "Vendor") {
+        newUser = new Vendor(nextID++, username, password, email);
+    } else {
+        newUser = new Customer(nextID++, username, password, email);
+    }
+
     users.push_back(newUser);
     saveUsers();
     return true;
 }
 
 bool AuthManager::loginUser(string usernameOrEmail, string password) {
-    loadUsers();
+    // Admin login
+    if (usernameOrEmail == ADMIN_EMAIL && password == ADMIN_PASSWORD) {
+        currentUser = new Admin(0, "Admin", password, usernameOrEmail);
+        currentUser->login();
+        return true;
+    }
 
+    loadUsers();
     for (User* user : users) {
         if ((user->getUsername() == usernameOrEmail || user->getEmail() == usernameOrEmail)
             && user->checkPassword(password)) {
