@@ -1,33 +1,31 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <map>
 #include "product.h"
-#include "notification.h"
+#include <vector>
+#include <string>
 using namespace std;
 
 class Inventory {
 private:
-    map<int, Product*> stock;  // productID → Product*
-    int lowStockLimit;         // لو اقل من كده يبعت notification
+    vector<Product*> products;
+    int capacity;
+    int currentCount;
 
 public:
-    Inventory(int lowLimit = 5);
+    Inventory(int cap);
     ~Inventory();
 
-    // اضافة وحذف
     void addProduct(Product* product);
-    void removeProduct(int productID);
+    void addProduct(string name, double price, string category, int quantity, int vendorID);
+    Product* getProduct(int productID);
+    vector<Product*> getAllProducts();
+    vector<Product*> getProductsByCategory(string category);
+    vector<Product*> getProductsByVendor(int vendorID);
+    bool isProductAvailable(int productID, int quantity);
+    void updateStock(int productID, int newQuantity);
 
-    // تعديل الكمية
-    void updateStock(int productID, int newQty);
-    void restockProduct(int productID, int addQty);
+    // New methods for admin
+    void updateProduct(int productID, double newPrice, int newStock);  // Add this
+    bool removeProduct(int productID);  // Add this
 
-    // فحص المخزون
-    void checkLowStock() const;
-    bool isProductAvailable(int productID, int requiredQty) const;
-
-    // عرض
-    void displayInventory() const;
-    Product* getProduct(int productID) const;
+    bool removeProductByVendor(int productID, int vendorID);
 };
