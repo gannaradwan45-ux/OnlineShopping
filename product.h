@@ -1,6 +1,6 @@
 #pragma once
-#include <iostream>
 #include <string>
+#include <iostream>
 using namespace std;
 
 class Product {
@@ -8,26 +8,31 @@ private:
     int productID;
     string productName;
     double price;
-    string category;
     int quantity;
+    string category;
+    int vendorID;  // 0 for admin, otherwise vendor ID
 
 public:
-    Product(int id, string name, double p, string cat, int qty);
+    // Constructors
+    Product();
+    Product(int id, string name, double p, int qty, string cat, int vendor = 0);
 
-    // Getters - كلها const
+    // Getters
     int getProductID() const;
     string getProductName() const;
     double getPrice() const;
-    string getCategory() const;
     int getQuantity() const;
+    string getCategory() const;
+    int getVendorID() const;
 
     // Setters
-    void setQuantity(int qty);
+    void setProductName(string name);
     void setPrice(double p);
+    void setQuantity(int qty);
+    void setCategory(string cat);
+    void setVendorID(int vendor);
 
     // Methods
-    double calculateFinalPrice() const;
-    void updateStock(int newQty);
-    void displayProduct() const;
-    void displayInfo() const;
+    void display() const;
+    bool isAvailable() const;
 };
