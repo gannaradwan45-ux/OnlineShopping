@@ -61,3 +61,4 @@ public:
     void displayObservers() const;
     ~NotificationManager();
 };
+
