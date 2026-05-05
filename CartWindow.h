@@ -3,21 +3,18 @@
 #include <QTableWidget>
 #include <QLabel>
 #include "ShoppingCart.h"
+#include "Inventory.h"
 
 class CartWindow : public QMainWindow {
     Q_OBJECT
-
 public:
-    CartWindow(ShoppingCart* cart, QWidget* parent = nullptr);
-
-signals:
-    void purchaseCompleted(QString productName, int quantity, double price);
-
+    CartWindow(ShoppingCart* cart, Inventory* inventory, QWidget* parent = nullptr);
 private slots:
     void onCheckout();
-
+    void onRemoveItem(int productId);
 private:
     ShoppingCart* cart;
+    Inventory* inventory;
     QTableWidget* cartTable;
     QLabel* totalLabel;
     void loadCart();
